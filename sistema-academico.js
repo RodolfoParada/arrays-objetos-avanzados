@@ -149,8 +149,8 @@ const AnalizadorAcademico = {
 
 // Ejercicio: Extiende el sistema académico creando funcionalidades como: 
 // ok sistema de matrícula con validaciones, 
-// pl cálculo de GPA universitario, 
-// pk predicción de rendimiento usando algoritmos simples, 
+// ok cálculo de GPA universitario, 
+// ok predicción de rendimiento usando algoritmos simples, 
 // y generación de reportes PDF simulados. 
 // Implementa operaciones inmutables para todas las transformaciones de datos.
 
@@ -349,8 +349,59 @@ function calcularPromedioGeneralSimple() {
 const UMBRAL_PROMEDIO_GENERAL = calcularPromedioGeneralSimple(); 
 
 
+//################################################
+// creacion de reporte
 
+function generarReportePDF(estudiante) {
+    // Verificar si la librería jsPDF está disponible
+    if (typeof window.jspdf === 'undefined') {
+        console.error("ERROR: La librería jsPDF no está cargada. Asegúrate de incluir el script.");
+        return;
+    }
 
+    const { jsPDF } = window.jspdf;
+    
+    // Inicializar el documento PDF
+    const doc = new jsPDF(); 
+    const gpa = calcularPromedioPonderado(estudiante.calificaciones); 
+    let y = 20;
+
+    // --- Contenido del Reporte ---
+    doc.setFontSize(22);
+    doc.text(`Reporte de Rendimiento: ${estudiante.nombre}`, 10, y);
+    y += 10;
+    
+    doc.setFontSize(14);
+    doc.text(`Carrera: ${estudiante.carrera}`, 10, y);
+    y += 8;
+    doc.text(`GPA Acumulado: ${gpa}`, 10, y);
+    y += 15;
+
+    // --- Tabla de Calificaciones (simplificada) ---
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('Asignatura', 10, y);
+    doc.text('Nota', 80, y);
+    doc.text('Créditos', 120, y);
+    y += 7; 
+    doc.line(10, y, 150, y); 
+    y += 5;
+
+    doc.setFont(undefined, 'normal');
+    estudiante.calificaciones.forEach(cal => {
+        doc.text(cal.asignatura, 10, y);
+        doc.text(String(cal.nota), 80, y);
+        doc.text(String(cal.creditos), 120, y);
+        y += 7;
+    });
+    
+    // --- 4. Guardar y mensaje de confirmación ---
+    const nombreArchivo = `Reporte_${estudiante.nombre.replace(/\s/g, '')}_${estudiante.id}.pdf`;
+    doc.save(nombreArchivo);
+    
+    // Mensaje de confirmación en la consola
+    console.log(`✅ ¡Reporte de ${estudiante.nombre} descargado exitosamente! Archivo: ${nombreArchivo}`);
+}
 
 // Demostración del sistema
 console.log('🎓 SISTEMA DE ANÁLISIS ACADÉMICO\n');
