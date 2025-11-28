@@ -146,6 +146,90 @@ const AnalizadorAcademico = {
   }
 };
 
+
+// Ejercicio: Extiende el sistema académico creando funcionalidades como: 
+// ok sistema de matrícula con validaciones, 
+// cálculo de GPA universitario, 
+// predicción de rendimiento usando algoritmos simples, 
+// y generación de reportes PDF simulados. 
+// Implementa operaciones inmutables para todas las transformaciones de datos.
+
+
+// sistema de matrícula con validaciones,
+function registrarMatricula(nombre, edad, carrera, pago){
+
+// Validación de datos de entrada
+    if (!nombre || nombre.trim() === '') {
+        return {
+            exito: false,
+            mensaje: 'El nombre del estudiante es obligatorio.'
+        };
+    }
+
+     if (!edad || edad.trim() === '') {
+        return {
+            exito: false,
+            mensaje: 'La edad del estudiante es obligatorio.'
+        };
+    }
+   
+
+if (!carrera || carrera.trim() === '') {
+        return {
+            exito: false,
+            mensaje: 'El curso es obligatorio.'
+        };
+    }
+
+ // Asegura que el pago sea un número positivo
+    if (typeof pago !== 'number' || pago <= 0) {
+        return {
+            exito: false,
+            mensaje: 'El pago debe ser un número positivo.'
+        };
+    }   
+
+// Creación del objeto de registro de matrícula
+const nuevoRegistro = {
+        idMatricula: Date.now(), // ID único basado en el timestamp
+        nombreEstudiante: nombre.trim(),
+        edadEstudiante: edad.trim(),
+        cursoAsignado: carrera.trim(),
+        montoPagado: pago,
+        fechaRegistro: new Date().toISOString()
+    };
+
+
+// C. Almacenamiento del registro (simulación de una operación de BD)
+    try {
+        almacenarRegistro(nuevoRegistro);
+        
+        return {
+            exito: true,
+            mensaje: `Matrícula de ${nombre} registrada con ID: ${nuevoRegistro.idMatricula}`,
+            registro: nuevoRegistro
+        };
+        
+    } catch (error) {
+        // Manejo de errores de almacenamiento simulado
+        return {
+            exito: false,
+            mensaje: `Error al intentar almacenar el registro: ${error.message}`
+        };
+    }
+
+  }
+  
+  
+  function almacenarRegistro(registro) {
+      // Simplemente agregamos el registro al array global
+      estudiantes.push(registro);
+      console.log(`[LOG] Nuevo registro añadido: ${registro.nombreEstudiante}`);
+  }
+
+
+
+
 // Demostración del sistema
 console.log('🎓 SISTEMA DE ANÁLISIS ACADÉMICO\n');
 
@@ -230,3 +314,16 @@ console.log(`Total calificaciones: ${estadisticasGenerales.totalCalificaciones}`
 console.log(`Promedio general: ${Math.round(estadisticasGenerales.promedioGeneral * 100) / 100}`);
 
 console.log('\n✅ Sistema de análisis académico completado exitosamente!');
+
+
+// *******************************************
+console.log('--- Intentando Matricular Estudiante 1 (Éxito) ---');
+const resultado1 = registrarMatricula('Sofía Herrera',"19", 'Teologia', 500);
+console.log(resultado1);
+
+console.log('\n--- Intentando Matricular Estudiante 2 (Fallo por Pago) ---');
+const resultado2 = registrarMatricula('Carlos Soto', '24', 'Locución', 6000);
+console.log(resultado2);
+
+console.log('\n--- Base de Datos Actual ---');
+console.log(estudiantes);
