@@ -75,7 +75,7 @@ const compose = (...fns) => x => fns.reduceRight((acc, fn) => fn(acc), x);
 // Composición funcional
 const procesarNumeros = compose(
   array => array.reduce(sumar, 0), // Suma total
-  duplicar,                        // Duplica cada número
+  array => array.map(duplicar),                        // Duplica cada número
   array => array.filter(esPar)     // Filtra pares
 );
 
@@ -94,10 +94,10 @@ const resultado = pipeline(
 // Currying y Funciones de Orden Superior
 // Currying: convertir función multi-argumento en una secuencia de funciones
 const multiplicar = a => b => a * b;
-duplicar = multiplicar(2);
+const duplicarCurrierd = multiplicar(2);
 const triplicar = multiplicar(3);
 
-console.log(duplicar(5)); // 10
+console.log(duplicarCurrierd(5)); // 10
 console.log(triplicar(5)); // 15
 
 // Función de orden superior que crea validadores

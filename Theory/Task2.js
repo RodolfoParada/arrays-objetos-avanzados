@@ -123,9 +123,9 @@ console.log(procesarCoordenadas([1, 2, 3, 4, 5]));
 // Casos de Uso Prácticos
 
 // Intercambio de valores
-let a = 1, b = 2;
-[a, b] = [b, a];
-console.log(a, b); // 2, 1
+let d = 1, e = 2;
+[d, e] = [e, d];
+console.log(d, e); // 2, 1
 
 // Procesamiento de APIs
 async function obtenerUsuario(id) {
