@@ -149,8 +149,8 @@ const AnalizadorAcademico = {
 
 // Ejercicio: Extiende el sistema académico creando funcionalidades como: 
 // ok sistema de matrícula con validaciones, 
-// cálculo de GPA universitario, 
-// predicción de rendimiento usando algoritmos simples, 
+// pl cálculo de GPA universitario, 
+// pk predicción de rendimiento usando algoritmos simples, 
 // y generación de reportes PDF simulados. 
 // Implementa operaciones inmutables para todas las transformaciones de datos.
 
@@ -323,6 +323,32 @@ function encontrarMejorPromedioPorCarrera(carrera) {
 
 
 // ****************************************
+// prediccion
+// Reutilizamos la función de promedio simple
+function calcularPromedioSimple(calificaciones) {
+    if (!calificaciones || calificaciones.length === 0) return 0.00;
+    const sumaNotas = calificaciones.reduce((sum, c) => sum + c.nota, 0);
+    const promedio = sumaNotas / calificaciones.length;
+    return promedio; // Dejamos el valor sin redondear para mayor precisión en el cálculo
+}
+
+function calcularPromedioGeneralSimple() {
+    let sumaTotalPromedios = 0;
+    
+    // Obtenemos el promedio simple de cada estudiante
+    const promedios = estudiantes.map(e => calcularPromedioSimple(e.calificaciones));
+
+    // Sumamos todos los promedios
+    sumaTotalPromedios = promedios.reduce((sum, p) => sum + p, 0);
+
+    // Calculamos el umbral (Promedio General)
+    const umbral = sumaTotalPromedios / estudiantes.length;
+    return parseFloat(umbral.toFixed(2));
+}
+
+const UMBRAL_PROMEDIO_GENERAL = calcularPromedioGeneralSimple(); 
+
+
 
 
 
@@ -457,3 +483,6 @@ console.log('----------------------------------------------------');
 // 5. Encontrar el mejor promedio en Ingeniería Informática
 const mejorInformatica = encontrarMejorPromedioPorCarrera('Ingeniería Informática');
 console.log(`Mejor promedio en ${mejorInformatica.carrera}: ${mejorInformatica.nombre} con GPA ${mejorInformatica.gpa}`);  
+
+
+// *********************************************************
