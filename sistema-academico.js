@@ -230,6 +230,102 @@ const nuevoRegistro = {
 
 
 
+
+// *********************************************
+
+// cálculo de GPA universitario, 
+
+function calcularPromedioPonderado(calificaciones) {
+  let sumaPuntosPonderados = 0;
+  let totalCreditos = 0;
+
+  calificaciones.forEach(c => {
+    // Puntos Ponderados = Nota x Créditos
+    sumaPuntosPonderados += c.nota * c.creditos;
+    totalCreditos += c.creditos;
+  });
+
+  if (totalCreditos === 0) {
+    return 0.00;
+  }
+
+  // Promedio Ponderado = Suma Puntos Ponderados / Total Créditos
+  const gpa = sumaPuntosPonderados / totalCreditos;
+  return parseFloat(gpa.toFixed(2));
+}
+
+
+function obtenerGPAEstudiante(id) {
+  const estudiante = estudiantes.find(e => e.id === id);
+
+  if (!estudiante) {
+    return { error: `Estudiante con ID ${id} no encontrado.` };
+  }
+
+  const gpa = calcularPromedioPonderado(estudiante.calificaciones);
+  return {
+    nombre: estudiante.nombre,
+    carrera: estudiante.carrera,
+    gpa: gpa
+  };
+}
+
+
+
+function filtrarEstudiantes(criterio, valor) {
+  switch (criterio.toLowerCase()) {
+    case 'activos':
+      return estudiantes.filter(e => e.activo);
+
+    case 'inactivos':
+      return estudiantes.filter(e => !e.activo);
+
+    case 'mayoresde23':
+      return estudiantes.filter(e => e.edad > 23);
+
+    case 'carrera':
+      if (!valor) return [];
+      return estudiantes.filter(e => e.carrera.toLowerCase() === valor.toLowerCase());
+
+    default:
+      return [];
+  }
+}
+
+
+function encontrarMejorPromedioPorCarrera(carrera) {
+  // 1. Filtrar estudiantes por la carrera y mapear con su GPA
+  const estudiantesPorCarrera = estudiantes
+    .filter(e => e.carrera.toLowerCase() === carrera.toLowerCase())
+    .map(e => ({
+      nombre: e.nombre,
+      gpa: calcularPromedioPonderado(e.calificaciones)
+    }));
+
+  if (estudiantesPorCarrera.length === 0) {
+    return { error: `No se encontraron estudiantes en la carrera "${carrera}".` };
+  }
+
+  // 2. Encontrar el mejor promedio usando reduce
+  const mejorEstudiante = estudiantesPorCarrera.reduce((mejor, actual) => {
+    return (actual.gpa > mejor.gpa) ? actual : mejor;
+  }, estudiantesPorCarrera[0]);
+
+  return {
+    carrera: carrera,
+    nombre: mejorEstudiante.nombre,
+    gpa: mejorEstudiante.gpa
+  };
+}
+
+
+
+
+
+// ****************************************
+
+
+
 // Demostración del sistema
 console.log('🎓 SISTEMA DE ANÁLISIS ACADÉMICO\n');
 
@@ -327,3 +423,37 @@ console.log(resultado2);
 
 console.log('\n--- Base de Datos Actual ---');
 console.log(estudiantes);
+
+
+//**************************************
+console.log('----------------------------------------------------');
+console.log('🎯 RESULTADOS DEL CÁLCULO DE GPA');
+console.log('----------------------------------------------------');
+
+// 1. GPA de Ana García (ID: 1)
+const gpaAna = obtenerGPAEstudiante(1);
+console.log(`GPA de ${gpaAna.nombre}: ${gpaAna.gpa}`); // Resultado: 8.44
+
+// 2. GPA de Carlos López (ID: 2)
+const gpaCarlos = obtenerGPAEstudiante(2);
+console.log(`GPA de ${gpaCarlos.nombre}: ${gpaCarlos.gpa}`); // Resultado: 7.37
+
+console.log('\n----------------------------------------------------');
+console.log('🔍 RESULTADOS DE FILTROS');
+console.log('----------------------------------------------------');
+
+// 3. Filtrar por estudiantes activos
+const activos = filtrarEstudiantes('activos').map(e => e.nombre);
+console.log(`Estudiantes Activos: ${activos.join(', ')}`); // Resultado: Ana García, Carlos López
+
+// 4. Filtrar por carrera 'Arquitectura'
+const arquitectura = filtrarEstudiantes('carrera', 'Arquitectura').map(e => e.nombre);
+console.log(`Estudiantes de Arquitectura: ${arquitectura.join(', ')}`); // Resultado: María Rodríguez
+
+console.log('\n----------------------------------------------------');
+console.log('👑 MEJOR PROMEDIO POR CARRERA');
+console.log('----------------------------------------------------');
+
+// 5. Encontrar el mejor promedio en Ingeniería Informática
+const mejorInformatica = encontrarMejorPromedioPorCarrera('Ingeniería Informática');
+console.log(`Mejor promedio en ${mejorInformatica.carrera}: ${mejorInformatica.nombre} con GPA ${mejorInformatica.gpa}`);  
